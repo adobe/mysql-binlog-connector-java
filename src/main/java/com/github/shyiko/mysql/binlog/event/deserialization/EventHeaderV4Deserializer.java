@@ -15,18 +15,16 @@
  */
 package com.github.shyiko.mysql.binlog.event.deserialization;
 
+import java.io.IOException;
+
 import com.github.shyiko.mysql.binlog.event.EventHeaderV4;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.github.shyiko.mysql.binlog.io.ByteArrayInputStream;
-
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
  */
 public class EventHeaderV4Deserializer implements EventHeaderDeserializer<EventHeaderV4> {
-
-    private static final EventType[] EVENT_TYPES = EventType.values();
 
     @Override
     public EventHeaderV4 deserialize(ByteArrayInputStream inputStream) throws IOException {
@@ -40,11 +38,11 @@ public class EventHeaderV4Deserializer implements EventHeaderDeserializer<EventH
         return header;
     }
 
-    private static EventType getEventType(int ordinal) throws IOException {
-        if (ordinal >= EVENT_TYPES.length) {
-            throw new IOException("Unknown event type " + ordinal);
+    private static EventType getEventType(int index) throws IOException {
+        if (EventType.EVENT_TYPES.get(index) == null) {
+            throw new IOException("Unknown event type " + index);
         }
-        return EVENT_TYPES[ordinal];
+        return EventType.EVENT_TYPES.get(index);
     }
 
 }

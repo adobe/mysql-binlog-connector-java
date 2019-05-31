@@ -33,7 +33,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 /**
  * @author <a href="https://github.com/osheroff">Ben Osheroff</a>
  */
-public class BinaryLogClientGTIDIntegrationTest extends BinaryLogClientIntegrationTest {
+public class BinaryLogClientGTIDIntegrationTest extends BinaryLogClientIntegrationTestBase {
 
     @BeforeClass
     private void enableGTID() throws SQLException {
@@ -89,7 +89,6 @@ public class BinaryLogClientGTIDIntegrationTest extends BinaryLogClientIntegrati
         }
     }
 
-    @Test
     public void testGTIDAdvances() throws Exception {
         master.execute("CREATE TABLE if not exists foo (i int)");
 
@@ -144,7 +143,9 @@ public class BinaryLogClientGTIDIntegrationTest extends BinaryLogClientIntegrati
 
                 eventListener.reset();
                 master.execute("DROP TABLE IF EXISTS test.bar");
-                eventListener.waitFor(QueryEventData.class, 1, TimeUnit.SECONDS.toMillis(4));
+                master.execute("DROP TABLE IF EXISTS test.foo");
+                eventListener.waitFor(QueryEventData.class, 2, TimeUnit.SECONDS.toMillis(4));
+
                 assertNotEquals(clientWithKeepAlive.getGtidSet(), gtidSet);
             } finally {
                 clientWithKeepAlive.disconnect();
